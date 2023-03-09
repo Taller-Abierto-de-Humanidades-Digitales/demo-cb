@@ -10,8 +10,11 @@ import pandas as pd
 from pytube import Playlist, YouTube
 from pytube.exceptions import PytubeError
 import time
+import re
 
 METADATA =  ["objectid","filename","youtubeid","title","creator","date","description","subject","location","latitude","longitude","source","identifier","type","format","language","rights","rightsstatement"]
+
+patron = r"\b\w{32}\b|\b\d{5}\b"
 
 url_list = "https://www.youtube.com/playlist?list=PL2JptZL3cKEP0M9Tn-ts_5I1XKTYxL9yU"
 
@@ -34,9 +37,15 @@ for i, video in enumerate(p.video_urls):
     if title not in df["title"].values:
         keywords = yt.keywords
         if len(keywords) > 1:
+            for i, keyword in enumerate(keywords):
+                eliminar = re.findall(patron, keyword)
+                elemento_limpio = re.sub(patron, "", keyword)
+                keywords[i] = elemento_limpio
             keywords = "; ".join(keywords)
         elif len(keywords) == 1:
             keywords = keywords[0]
+            if re.findall(patron, keywords):
+                keywords = ""
         else:
             keywords = ""
 
@@ -44,7 +53,7 @@ for i, video in enumerate(p.video_urls):
 
         elemento = pd.DataFrame({
             "objectid": [yt.video_id],
-            "filename": [title],
+            "filename": [""],
             "youtubeid": [yt.video_id],
             "title": [title],
             "creator": [yt.author],
@@ -64,7 +73,7 @@ for i, video in enumerate(p.video_urls):
         })
 
         df = pd.concat([df, elemento], ignore_index=True)
-        
+
     time.sleep(2)
 
 
