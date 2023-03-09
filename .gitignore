@@ -14,3 +14,6 @@ vendor/
 
 # temporarily ignore gemfile.lock
 Gemfile.lock
+
+# Archivos creados como prueba
+info.json
