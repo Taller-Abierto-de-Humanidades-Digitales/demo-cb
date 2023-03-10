@@ -8,7 +8,18 @@
 
 import pandas as pd
 import numpy as np
+import nltk
+from nltk.corpus import stopwords
 import re
+
+nltk.download("stopwords")
+
+stop = set(stopwords.words("spanish"))
+
+stopwords_personal = ['35_a', 'ar-', 'i', 'ii']
+
+for word in stopwords_personal:
+    stop.add(word)
 
 def reemplazar(patron: str, texto: str, reemplazo: str) -> str:
     """ Reemplazar palabras clave en los metadatos de los videos
@@ -30,9 +41,10 @@ def reemplazar(patron: str, texto: str, reemplazo: str) -> str:
     if texto is not np.nan:
         
         clean_strings = []
-        for string in texto.split(";"):
-            clean_string = re.sub(patron, reemplazo, string).replace("; ", ";")
-            clean_strings.append(clean_string)
+        for string in texto.split("; "):
+            if string not in stop:
+                clean_string = re.sub(patron, reemplazo, string).replace("; ", ";").replace("; ;", ";").strip().lower()
+                clean_strings.append(clean_string)
         
         list_to_string = "; ".join(clean_strings)
 
