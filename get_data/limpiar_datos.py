@@ -25,7 +25,7 @@ def reemplazar(patron: str, texto: str, reemplazo: str) -> str:
     texto: str
         Texto limpio
     """
-    print(texto)
+    # print(texto)
 
     if texto is not np.nan:
         

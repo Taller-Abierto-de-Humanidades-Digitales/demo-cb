@@ -14,6 +14,23 @@ import re
 
 METADATA =  ["objectid","filename","youtubeid","title","creator","date","description","subject","location","latitude","longitude","source","identifier","type","format","language","rights","rightsstatement"]
 
+def prepare_df(df):
+    """ Preparar el dataframe para crear el CSV
+    PARAMETROS
+    ----------
+    df: pandas.DataFrame
+        Dataframe con los metadatos de los videos
+    RETORNO
+    -------
+    df: pandas.DataFrame
+        Dataframe con los metadatos de los videos
+    """
+
+    df = df.drop_duplicates(subset="identifier", keep="first")
+    df = df.sort_values(by="identifier", ascending=False)
+    df = df.reset_index(drop=True)
+
+    return df
 
 def crear_datos(url_list: str, origen_datos: str, patron: str) -> pd.DataFrame:
     """ Obtener metadatos de videos de Youtube y crear o actualizar un dataframe con ellos
@@ -60,6 +77,7 @@ def crear_datos(url_list: str, origen_datos: str, patron: str) -> pd.DataFrame:
                     elemento_limpio = re.sub(patron, "", keyword)
                     keywords[i] = elemento_limpio
                 keywords = "; ".join(keywords)
+                keywords = keywords.replace("  ;", "")
             elif len(keywords) == 1:
                 keywords = keywords[0]
                 if re.findall(patron, keywords):
@@ -103,6 +121,8 @@ def crear_datos(url_list: str, origen_datos: str, patron: str) -> pd.DataFrame:
 
         else:
             print(f"El video {video} ya está en el conjunto de datos", end="\r", flush=True)
+
+    df = prepare_df(df)
 
     return df
 
