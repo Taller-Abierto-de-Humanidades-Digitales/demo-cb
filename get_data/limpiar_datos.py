@@ -16,7 +16,7 @@ nltk.download("stopwords")
 
 stop = set(stopwords.words("spanish"))
 
-stopwords_personal = ['35_a', 'ar-', 'i', 'ii']
+stopwords_personal = ['35_a', 'ar-', 'i', 'ii', 'a', 'el', 'de', 'en', 'la', 'hacia', 'hay', 'que', 'por', 'para', 'se', 'un', 'una', 'unos', 'unas', 'y', 'o', 'u', 'v', 'al', 'del', 'al', 'del', 'los', 'las', 'con', 'sin', 'sobre', 'bajo', 'cabe', 'sobre', 'entre', 'durante', 'mediante', 'tras', 'hacia', 'hasta', 'desde', 'contra', 'según', 'aunque', 'ya', 'que', 'si', 'no', 'ni', 'o', 'u', 'v', 'pero', 'pues', 'porque', 'porqué', 'por qué', 'como', 'cuando', 'donde', 'cuanto', 'cuanta', 'cuantos', 'cuantas', 'quien', 'quienes', 'que', 'cual', 'cuales', 'lo', 'la', 'los', 'las', 'le', 'les', 'me', 'te', 'se', 'nos', 'os', 'le', 'les', 'lo', 'la', 'los', 'las', 'me', 'te', 'se', 'nos', 'os', 'mí', 'ti', 'si', 'nos', 'os', 'mío', 'tuyo', 'suyo', 'nuestro', 'vuestro', 'mía', 'tuya', 'suya', 'nuestra', 'vuestra', 'míos', 'tuyos', 'suyos', 'nuestros', 'vuestros', 'mías', 'tuyas', 'suyas', 'nuestras', 'vuestras', 'ser', 'estar', 'haber', 'hacer', 'poder', 'querer', 'deber', 'decir', 'saber', 'tener', 'ir', 'dar', 'salir', 'ver', 'conocer', 'pensar', 'querer', 'decir', 'hacer', 'poder', 'querer', 'deber', 'decir', 'saber', 'tener', 'ir', 'dar', 'salir', 'ver', 'conocer', 'pensar', 'querer', '']
 
 for word in stopwords_personal:
     stop.add(word)
