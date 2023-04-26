@@ -17,3 +17,6 @@ Gemfile.lock
 
 # Archivos creados como prueba
 info.json
+
+thumbnails/
+videos_backup/
