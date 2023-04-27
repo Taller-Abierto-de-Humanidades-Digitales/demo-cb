@@ -2,7 +2,7 @@
 <style>
 #home-banner {
     background-image: url('{% include image/featured-image.html %}');
-    background-size: contain;
+    background-size: cover;
     background-repeat: no-repeat;
     background-position: {{ site.data.theme.home-banner-image-position | default: 'center' }};
 }
@@ -18,12 +18,12 @@
 </style>
 <div id="home-banner" class="container-fluid mb-0 p-0">
     <div id="home-title-box" class="position-relative" >
-        <div class="p-2 text-center text-white"> <!-- bg-dark bg-opacity-75 -->
+        <div class="p-2 text-center text-white bg-info bg-opacity-75"> <!-- bg-dark bg-opacity-75 -->
             {% if site.organization-logo-nav %}
             <a class="d-none d-md-block" href="{{ site.organization-link }}" target="_blank" rel="noopener">
                 <img id="home-banner-logo" src="{{ site.organization-logo-nav | relative_url }}" alt="{{ site.organization-name }} home" >
             </a>{% endif %}
-            <h1 class="display-4">{{ site.title }}</h1>
+            <h1 class="display-2">{{ site.title }}</h1>
             {% if site.tagline %}<p class="mb-0">{{ site.tagline }}</p>{% endif %}
         </div>
         {% unless site.data.theme.featured-image contains '/' %}
