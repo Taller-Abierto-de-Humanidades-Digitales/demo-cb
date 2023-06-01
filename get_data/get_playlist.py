@@ -18,9 +18,10 @@ import requests
 from io import BytesIO
 import cv2
 import numpy as np
+from datetime import date
 
-METADATA =  ["objectid","filename","youtubeid","title","creator","date","description","subject","location","latitude","longitude","source","identifier","type","format","language","rights","rightsstatement"]
-
+METADATA =  ["objectid","filename","youtubeid","title","creator","date","creationdate","description","subject","location","latitude","longitude","source","identifier","type","format","language","rights","rightsstatement","addingdate"]
+    
 def prepare_df(df):
     """ Preparar el dataframe para crear el CSV
     PARAMETROS
@@ -138,6 +139,7 @@ def crear_datos(url_list: str, origen_datos: str, patron: str) -> pd.DataFrame:
                     "title": [title],
                     "creator": [yt.author],
                     "date": [yt.publish_date],
+                    "creationdate": [""],
                     "description": [yt.description],
                     "subject": [keywords],
                     "location": [""],
@@ -149,15 +151,16 @@ def crear_datos(url_list: str, origen_datos: str, patron: str) -> pd.DataFrame:
                     "format": [mimetype],
                     "language": [""],
                     "rights": ["Licencia de YouTube estándar"],
-                    "rightsstatement": ["https://www.youtube.com/static?template=terms"]
+                    "rightsstatement": ["https://www.youtube.com/static?template=terms"],
+                    "addingdate": [date.today()]
                 })
 
                 df = pd.concat([df, elemento], ignore_index=True)
 
                 time.sleep(2)
 
-            except PytubeError:
-                print(f"PytubeError: {i}, {video}")
+            except PytubeError as e:
+                print(f"PytubeError: {i}, {video}. {e}")
                 pass
 
         elif video.replace("www.", "") in df["identifier"].tolist() and not os.path.exists(f"thumbnails/{video.split('=')[-1]}.jpg"):
