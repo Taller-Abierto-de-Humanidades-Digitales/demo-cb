@@ -65,6 +65,7 @@ def crear_datos(url_list: str, origen_datos: str, patron: str) -> pd.DataFrame:
 
     for i, video in enumerate(p.video_urls):
         if video.replace("www.", "") not in df["identifier"].tolist(): # Eliminar www. para evitar duplicados
+            print("Intentando guardar metadatos de video y miniatura")
             yt = YouTube(video)
 
             if not os.path.exists(f"thumbnails/{yt.video_id}.jpg"):
@@ -103,61 +104,64 @@ def crear_datos(url_list: str, origen_datos: str, patron: str) -> pd.DataFrame:
             try:
                 title = yt.title
                 print(i, title, video)
-            except PytubeError:
-                print(i, video)
-                break
+
 
         
-            keywords = yt.keywords
-            if len(keywords) > 1:
-                for i, keyword in enumerate(keywords):
-                    eliminar = re.findall(patron, keyword)
-                    elemento_limpio = re.sub(patron, "", keyword)
-                    keywords[i] = elemento_limpio
-                keywords = "; ".join(keywords)
-                keywords = keywords.replace("  ;", "")
-            elif len(keywords) == 1:
-                keywords = keywords[0]
-                if re.findall(patron, keywords):
+                keywords = yt.keywords
+                if len(keywords) > 1:
+                    for i, keyword in enumerate(keywords):
+                        eliminar = re.findall(patron, keyword)
+                        elemento_limpio = re.sub(patron, "", keyword)
+                        keywords[i] = elemento_limpio
+                    keywords = "; ".join(keywords)
+                    keywords = keywords.replace("  ;", "")
+                elif len(keywords) == 1:
+                    keywords = keywords[0]
+                    if re.findall(patron, keywords):
+                        keywords = ""
+                else:
                     keywords = ""
-            else:
-                keywords = ""
 
-            try:
-                mimetype = yt.vid_info['streamingData']['formats'][0]['mimeType'].split(";")[0]
-            except KeyError:
-                mimetype = "video/3gpp"
-            except IndexError:
-                mimetype = "video/3gpp"
+                try:
+                    mimetype = yt.vid_info['streamingData']['formats'][0]['mimeType'].split(";")[0]
+                except KeyError:
+                    mimetype = "video/3gpp"
+                except IndexError:
+                    mimetype = "video/3gpp"
 
-            # Crear dataframe
+                # Crear dataframe
 
-            elemento = pd.DataFrame({
-                "objectid": [yt.video_id],
-                "filename": [""],
-                "youtubeid": [yt.video_id],
-                "title": [title],
-                "creator": [yt.author],
-                "date": [yt.publish_date],
-                "description": [yt.description],
-                "subject": [keywords],
-                "location": [""],
-                "latitude": [""],
-                "longitude": [""],
-                "source": [yt.channel_url],
-                "identifier": [yt.watch_url],
-                "type": ["Image;MovingImage"],
-                "format": [mimetype],
-                "language": [""],
-                "rights": ["Licencia de YouTube estándar"],
-                "rightsstatement": ["https://www.youtube.com/static?template=terms"]
-            })
+                elemento = pd.DataFrame({
+                    "objectid": [yt.video_id],
+                    "filename": [""],
+                    "youtubeid": [yt.video_id],
+                    "title": [title],
+                    "creator": [yt.author],
+                    "date": [yt.publish_date],
+                    "description": [yt.description],
+                    "subject": [keywords],
+                    "location": [""],
+                    "latitude": [""],
+                    "longitude": [""],
+                    "source": [yt.channel_url],
+                    "identifier": [yt.watch_url],
+                    "type": ["Image;MovingImage"],
+                    "format": [mimetype],
+                    "language": [""],
+                    "rights": ["Licencia de YouTube estándar"],
+                    "rightsstatement": ["https://www.youtube.com/static?template=terms"]
+                })
 
-            df = pd.concat([df, elemento], ignore_index=True)
+                df = pd.concat([df, elemento], ignore_index=True)
 
-            time.sleep(2)
+                time.sleep(2)
 
-        elif not os.path.exists(f"thumbnails/{video.split('=')[-1]}.jpg"):
+            except PytubeError:
+                print(f"PytubeError: {i}, {video}")
+                pass
+
+        elif video.replace("www.", "") in df["identifier"].tolist() and not os.path.exists(f"thumbnails/{video.split('=')[-1]}.jpg"):
+            print("Intentando guardar miniatura")
             yt = YouTube(video)
             # guardar thumbnail
             try:
@@ -180,7 +184,7 @@ def crear_datos(url_list: str, origen_datos: str, patron: str) -> pd.DataFrame:
                 pass
 
         else:
-            print(f"El video {video} ya está en el conjunto de datos", end="\r", flush=True)
+            print(f"El video {video} ya está en el conjunto de datos")
 
     df = prepare_df(df)
 
@@ -206,7 +210,7 @@ def create_banner_img(max_width, max_height):
     imagenes = [os.path.join("thumbnails", i) for i in imagenes if i.endswith(".jpg")]
     n_imagenes = len(imagenes)
     n_columnas = calculate_n_columns(imagenes, max_width, max_height)
-    print(n_columnas)
+    #print(n_columnas)
     n_filas = (n_imagenes + n_columnas - 1) // n_columnas  # Redondear hacia arriba la división entera
 
     ancho_imagenes = round(max_width / n_columnas)
